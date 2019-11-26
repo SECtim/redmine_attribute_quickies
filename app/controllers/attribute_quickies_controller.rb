@@ -22,10 +22,10 @@ class AttributeQuickiesController < ApplicationController
 
   unloadable
 
-  before_filter :find_project #filter is part of redmine
-  before_filter :authorize # filter is part of redmine
-  before_filter :find_attribute_quicky, :only => [:show, :update, :edit ]
-  before_filter :build_new_attribute_quicky_from_params, :only => [:new, :create, :issue, :issue_attributes]
+  before_action :find_project #filter is part of redmine
+  before_action :authorize # filter is part of redmine
+  before_action :find_attribute_quicky, only: [:show, :update, :edit ]
+  before_action :build_new_attribute_quicky_from_params, only: [:new, :create, :issue, :issue_attributes]
   
   helper :issues 
   helper :custom_fields 
@@ -78,6 +78,7 @@ class AttributeQuickiesController < ApplicationController
     @journal_details ||= []
     @notes = @attribute_quicky.notes
     @attribute_quicky.issue_template_id = nil #unset to prevent overiding formerly copied attributes at next save action
+    @attribute_quicky.time_entry.permit!
     @time_entry = TimeEntry.new(@attribute_quicky.time_entry)
      
   end #def
@@ -93,6 +94,7 @@ class AttributeQuickiesController < ApplicationController
        params[:attribute_quicky].except!(:issue_template_id) if @issue.blank? && params[:attribute_quicky].present? && params[:attribute_quicky][:issue_template_id].present?
        new_issue if @issue.blank?
        new_issue if !@issue.visible?(User.current)
+         params.permit!
 	  @attribute_quicky.update_attributes( params[:attribute_quicky] )
       
       if !@issue.new_record? #we have a real new input
@@ -202,6 +204,7 @@ private
 
   # ------------------------------------------------------------------------------------ #
   def find_attribute_quicky
+    logger.debug("find_attribute_quicky #{params[:attribute_quicky_id]}")
     @attribute_quicky = AttributeQuicky.find(params[:attribute_quicky_id])
   rescue ActiveRecord::RecordNotFound
     render_404

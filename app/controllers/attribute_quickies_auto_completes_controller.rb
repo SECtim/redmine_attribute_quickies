@@ -20,7 +20,7 @@
 
 class AttributeQuickiesAutoCompletesController < ApplicationController
 
-  before_filter :find_project
+  before_action :find_project
   
   #------------------------------------------------------------------------------------- #
   def copy_issue_attributes
@@ -28,7 +28,7 @@ class AttributeQuickiesAutoCompletesController < ApplicationController
     @journal_details 	= []
     @content 			= ""
     
-    if params.key?(:attribute_quicky) && params[:attribute_quicky]key?(:issue_template_id)
+    if params.key?(:attribute_quicky) && params[:attribute_quicky].key?(:issue_template_id)
       @issue 			= find_issue_by_id(params[:attribute_quicky][:issue_template_id])
       @attribute_list 	= (@issue.present? && @issue.visible?(User.current)) ? issue_attribute_list( @issue ) : []
       @journal_details 	= @attribute_list.map {|attr| JournalDetail.instantiate(attr) }

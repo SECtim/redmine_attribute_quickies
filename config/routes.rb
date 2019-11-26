@@ -30,9 +30,9 @@ RedmineApp::Application.routes.draw do
   end
 
   # additional link for resource quickies creation and administration
-  match '/projects/:id/settings/attribute_quickies/preview/notes' => 'attribute_quickies#issue', :as => 'preview_attribute_quickies_notes', :via => [:put]
+  match '/projects/:id/settings/attribute_quickies/preview/notes' => 'attribute_quickies#issue', :as => 'preview_attribute_quickies_notes', :via => [:put, :post]
 
   # link to retrieve last issue changes
-  match '/projects/:id/settings/attribute_quickies/issue/attributes' => 'attribute_quickies#issue_attributes', :as => 'attribute_quickies_issue_attributes', :via => [:put]
+  match '/projects/:id/settings/attribute_quickies/issue/attributes' => 'attribute_quickies#issue_attributes', :as => 'attribute_quickies_issue_attributes', :via => [:put, :post]
   
 end

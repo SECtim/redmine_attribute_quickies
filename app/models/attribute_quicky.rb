@@ -30,8 +30,9 @@ class AttributeQuicky < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :description
 
-  attr_protected   :id
-
+  #attr_protected   :id
+  :id
+  
   serialize        :attribute_list
   serialize		   :time_entry
   

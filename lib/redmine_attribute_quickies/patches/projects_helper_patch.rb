@@ -21,20 +21,23 @@
 module RedmineAttributeQuickies
   module Patches
     module ProjectsHelperPatch
-	  def self.included(base)
-		base.send(:include, InstanceMethods)
-		base.class_eval do
-		  unloadable
-
-		  alias_method_chain :project_settings_tabs, :attribute_quicky_settings
-		end
-	  end
-
-	  module InstanceMethods
-  
-		# Append tab for attribute quicky settings to project settings tabs.
-		def project_settings_tabs_with_attribute_quicky_settings
-		  tabs = project_settings_tabs_without_attribute_quicky_settings
+#	  def self.included(base)
+#		base.send(:include, InstanceMethods)
+#		base.class_eval do
+#		  unloadable
+#
+#		  #alias_method_chain :project_settings_tabs, :attribute_quicky_settings
+#                  alias_method :project_settings_tabs_without_attribute_quicky_settings, :project_settings_tabs
+#                  alias_method :project_settings_tabs, :project_settings_tabs_with_attribute_quicky_settings
+#		end
+#	  end
+#
+#	  module InstanceMethods
+#  
+#		# Append tab for attribute quicky settings to project settings tabs.
+      #		def project_settings_tabs_with_attribute_quicky_settings
+                def project_settings_tabs
+		  tabs = super #project_settings_tabs_without_attribute_quicky_settings
 	  
 		  if Setting['plugin_redmine_attribute_quickies']['attribute_quickies_active'] 
 			 
@@ -85,12 +88,19 @@ module RedmineAttributeQuickies
 		  tabs
 		end
 	
-	  end
+	#  end
 	end
   end
 end
 
-unless ProjectsHelper.included_modules.include?(RedmineAttributeQuickies::Patches::ProjectsHelperPatch)
-  ProjectsHelper.send(:include, RedmineAttributeQuickies::Patches::ProjectsHelperPatch)
-end
+#unless ProjectsHelper.included_modules.include?(RedmineAttributeQuickies::Patches::ProjectsHelperPatch)
+#  ProjectsHelper.send(:include, RedmineAttributeQuickies::Patches::ProjectsHelperPatch)
+#end
 
+
+if Redmine::Plugin.installed?(:easy_extensions)
+  RedmineExtensions::PatchManager.register_helper_patch 'ProjectsHelper',
+    'RedmineAttributeQuickies::Patches::ProjectsHelperPatch', prepend: true
+else
+  ProjectsController.send :helper, RedmineAttributeQuickies::Patches::ProjectsHelperPatch
+end
